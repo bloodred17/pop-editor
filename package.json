@@ -10,7 +10,7 @@
     "build": "tsc && vite build --config vite.build.config.js",
     "preview": "vite preview"
   },
-  "dependencies": {
+  "dependencies": { 
     "interactjs": "^1.10.26",
     "lit": "^3.1.0",
     "pdf-lib": "^1.17.1",

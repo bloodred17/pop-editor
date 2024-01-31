@@ -59,7 +59,7 @@ export class PopEditor extends LitElement {
   `
 
   @property() data: any;
-  @property() url: string = '';
+  @property() url: string = ''; 
   @property({type: Array}) fields: string[] = ['abc'];
 
   @property({type: Number}) scale = 1;

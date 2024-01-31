@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     topLevelAwait(),
     tsconfig({ filename: 'tsconfig.build.json' }),
-    dts({ rollupTypes: true })
+    dts({ rollupTypes: true }) 
   ],
   build: {
     lib: {

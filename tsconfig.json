@@ -9,7 +9,7 @@
     // "outDir": "./dist",
     "declaration": true,
 
-    /* Bundler mode */
+    /* Bundler mode */ 
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
