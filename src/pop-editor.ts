@@ -6,7 +6,7 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 
 @customElement('pop-editor')
-class PopEditor extends LitElement {
+export class PopEditor extends LitElement {
   static styles = css`
   :host {
     display: block; 
@@ -59,7 +59,7 @@ class PopEditor extends LitElement {
   `
 
   @property() data: any;
-  @property() url: string = '';
+  @property() url: string = ''; 
   @property({type: Array}) fields: string[] = ['abc'];
 
   @property({type: Number}) scale = 1;
@@ -161,7 +161,7 @@ class PopEditor extends LitElement {
   dragField(className: string) {
     interact(`.${className}`).draggable({
       listeners: {
-        start: (event) => {
+        start: (_event) => {
           // console.log(event.type, event.target)
         },
         move: (event) => {
@@ -171,7 +171,7 @@ class PopEditor extends LitElement {
           event.target.style.transform =
             `translate(${this.positions[className].x}px, ${this.positions[className].y}px)`
         },
-        end: (event) => {
+        end: (_event) => {
           const pos = this.getCoordinates(JSON.parse(JSON.stringify(this.positions[className])));
           if (className.includes('-copy')) {
             const originalNode = className.replace(/-copy\d/,'');
@@ -212,6 +212,7 @@ class PopEditor extends LitElement {
     console.log(pos)
     if (this.viewport && this.viewport?.viewBox?.length > 0) {
       const [x, y, width, height] = this.viewport?.viewBox;
+      console.log(x,y);
       pos.y = (height - ((pos.y * height) / this.viewport?.height)) - 10;
       pos.x = (pos.x * width) / this.viewport?.width;
     }
@@ -228,12 +229,12 @@ class PopEditor extends LitElement {
     const pages = pdfDoc.getPages();
     const firstPage = pages[0];
     const { width, height } = firstPage.getSize()
-    
+    console.log(width,height);
     for (const field of this.fields) {
       // const pos = this.getCoordinates(JSON.parse(JSON.stringify(this.positions[field])));
       try {
         if (this.configNodes[field]?.type == 'multiple') {
-          for (const position of Object.values(this.configNodes[field].positions)) {
+          for (const position of Object.values<{x:number, y:number}>(this.configNodes[field].positions)) {
             firstPage.drawText('This text was added with JavaScript!', {
               x: position?.x,
               y: position?.y,
@@ -259,7 +260,8 @@ class PopEditor extends LitElement {
     return pdfBytes;
   }
 
-  private async _display(e: Event) {
+  private async _display(_e: Event) {
+    console.log('here in the display function');
     const data = await this.modifyPdf();
     const blob = new Blob([data]);
     const options = {
@@ -270,7 +272,7 @@ class PopEditor extends LitElement {
     this.dispatchEvent(new CustomEvent('modified', options));
   }
 
-  private async _download(e: Event) {
+  private async _download(_e: Event) {
     const data = await this.modifyPdf();
     const blob = new Blob([data]);
 
@@ -284,7 +286,7 @@ class PopEditor extends LitElement {
     }
   }
 
-  private _generateConfig(e: Event) {
+  private _generateConfig(_e: Event) {
     const nodes = []
     for (const node of Object.values<any>(this.configNodes)) {
       try {
@@ -331,7 +333,7 @@ class PopEditor extends LitElement {
   getPosition(e: PointerEvent) {
     let posX = 0;
     let posY = 0;
-    if (!e) e = window.event;
+    if (!e) e = window.event as PointerEvent;
     if (e.pageX || e.pageY) {
       posX = e.pageX;
       posY = e.pageY;
@@ -347,7 +349,7 @@ class PopEditor extends LitElement {
     }
   }
 
-  _closeContextMenu(e: Event) {
+  _closeContextMenu(_e: Event) {
     if (!this.shadowRoot) return;
     const menu = this.shadowRoot.querySelector<HTMLElement>('.context-menu');
     if (!menu) return;
@@ -430,7 +432,7 @@ class PopEditor extends LitElement {
 
       ${
         this.fields.map((field) => html`
-          <div class="draggable ${field}" @contextmenu=${{handleEvent: (e) => this._dragBoxContextMenu(e, field)}}>
+          <div class="draggable ${field}" @contextmenu=${{handleEvent: (e:PointerEvent) => this._dragBoxContextMenu(e, field)}}>
           ${field}
           </div>
         `)

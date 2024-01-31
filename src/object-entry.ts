@@ -20,7 +20,7 @@ export class ObjectEntry extends LitElement {
   @query('input')
   _input!: HTMLInputElement;
 
-  _addEntry(e: Event) {
+  _addEntry(_e: Event) {
     const name = this._input.value;
     this._input.value = '';
     this._submitEnabled = false;

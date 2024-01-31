@@ -6,10 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + Lit + TS</title>
     <link rel="stylesheet" href="./src/index.css" />
-    <script type="module" src="/src/pop-editor.ts"></script>
+    <script type="module" src="./dist/pdfx.js"></script>
     <script type="module" src="/src/pdf-viewer.ts"></script>
-    <script type="module" src="/src/object-entry.ts"></script>
-    <script type="module" src="/src/my-timer.ts"></script>
     <style>
       body, * {
         margin: 0;
@@ -22,7 +20,6 @@
     </style>
   </head>
   <body>
-    <!-- <my-timer duration="300"></my-timer> -->
     <main>
       <pop-editor 
         id="one"
@@ -30,8 +27,6 @@
         fields='["hello","world"]'
       ></pop-editor>
     </main>
-
-    <object-entry></object-entry>
   </body>
     
     
@@ -44,6 +39,7 @@
       }
 
       const popEditor = document.createElement('pdf-viewer');
+      console.log('here in popEditor', popEditor);
       popEditor.setAttribute("id", "result");
       popEditor.setAttribute("data", event.detail.data);
       main.appendChild(popEditor)
