@@ -3,10 +3,15 @@ import interact from 'interactjs'
 import { customElement, property, state } from "lit/decorators.js";
 import { PDFDocumentProxy, GlobalWorkerOptions, getDocument, PageViewport } from "pdfjs-dist";
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import './index.css'
 
+export type Position = {
+  x: number,
+  y: number,
+}
 
 @customElement('pop-editor')
-class PopEditor extends LitElement {
+export class PopEditor extends LitElement {
   static styles = css`
   :host {
     display: block; 
@@ -161,9 +166,9 @@ class PopEditor extends LitElement {
   dragField(className: string) {
     interact(`.${className}`).draggable({
       listeners: {
-        start: (event) => {
-          // console.log(event.type, event.target)
-        },
+        // start: (event) => {
+        //   // console.log(event.type, event.target)
+        // },
         move: (event) => {
           this.positions[className].x += event.dx
           this.positions[className].y += event.dy
@@ -172,7 +177,8 @@ class PopEditor extends LitElement {
             `translate(${this.positions[className].x}px, ${this.positions[className].y}px)`
         },
         end: (event) => {
-          const pos = this.getCoordinates(JSON.parse(JSON.stringify(this.positions[className])));
+          event
+          const pos: Position = this.getCoordinates(JSON.parse(JSON.stringify(this.positions[className])));
           if (className.includes('-copy')) {
             const originalNode = className.replace(/-copy\d/,'');
             this.configNodes[originalNode].positions[className] = pos; 
@@ -212,6 +218,8 @@ class PopEditor extends LitElement {
     console.log(pos)
     if (this.viewport && this.viewport?.viewBox?.length > 0) {
       const [x, y, width, height] = this.viewport?.viewBox;
+      x
+      y
       pos.y = (height - ((pos.y * height) / this.viewport?.height)) - 10;
       pos.x = (pos.x * width) / this.viewport?.width;
     }
@@ -227,13 +235,13 @@ class PopEditor extends LitElement {
     
     const pages = pdfDoc.getPages();
     const firstPage = pages[0];
-    const { width, height } = firstPage.getSize()
+    // const { width, height } = firstPage.getSize()
     
     for (const field of this.fields) {
       // const pos = this.getCoordinates(JSON.parse(JSON.stringify(this.positions[field])));
       try {
         if (this.configNodes[field]?.type == 'multiple') {
-          for (const position of Object.values(this.configNodes[field].positions)) {
+          for (const position of Object.values<Position>(this.configNodes[field].positions)) {
             firstPage.drawText('This text was added with JavaScript!', {
               x: position?.x,
               y: position?.y,
@@ -260,6 +268,7 @@ class PopEditor extends LitElement {
   }
 
   private async _display(e: Event) {
+    e
     const data = await this.modifyPdf();
     const blob = new Blob([data]);
     const options = {
@@ -271,6 +280,7 @@ class PopEditor extends LitElement {
   }
 
   private async _download(e: Event) {
+    e
     const data = await this.modifyPdf();
     const blob = new Blob([data]);
 
@@ -285,6 +295,7 @@ class PopEditor extends LitElement {
   }
 
   private _generateConfig(e: Event) {
+    e
     const nodes = []
     for (const node of Object.values<any>(this.configNodes)) {
       try {
@@ -331,7 +342,7 @@ class PopEditor extends LitElement {
   getPosition(e: PointerEvent) {
     let posX = 0;
     let posY = 0;
-    if (!e) e = window.event;
+    if (!e) e = window?.event as PointerEvent;
     if (e.pageX || e.pageY) {
       posX = e.pageX;
       posY = e.pageY;
@@ -348,6 +359,7 @@ class PopEditor extends LitElement {
   }
 
   _closeContextMenu(e: Event) {
+    e
     if (!this.shadowRoot) return;
     const menu = this.shadowRoot.querySelector<HTMLElement>('.context-menu');
     if (!menu) return;
@@ -415,13 +427,13 @@ class PopEditor extends LitElement {
       <div class="context-menu">
         <div class="menu-items">
           <button @click=${this._closeContextMenu}> Close </button>
-          <button class="menu-item" @click="${this._contextSetFont}">Set Font Size</button>
+          <button class="menu-item text-red-500" @click="${this._contextSetFont}">Set Font Size</button>
           <button class="menu-item">Set Remove</button>
           <button class="menu-item">Set Color</button>
           <button class="menu-item" @click="${this._multiPositions}">Set Multi</button>
           <button class="menu-item">Set more attributes</button>
         </div>
-
+ 
         <div class="action">
           <input >
           <button @click="${this._set}">Set</button>
@@ -430,7 +442,7 @@ class PopEditor extends LitElement {
 
       ${
         this.fields.map((field) => html`
-          <div class="draggable ${field}" @contextmenu=${{handleEvent: (e) => this._dragBoxContextMenu(e, field)}}>
+          <div class="draggable ${field}" @contextmenu=${{handleEvent: (e: PointerEvent) => this._dragBoxContextMenu(e, field)}}>
           ${field}
           </div>
         `)

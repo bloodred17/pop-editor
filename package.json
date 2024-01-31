@@ -1,11 +1,13 @@
 {
   "name": "pdfx",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "1.0.6",
   "type": "module",
+  "main": "dist/pdfx.js",
+  "description": "create visually compelling PDFs with precise control over element placement and seamless integration with JSON data.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --config vite.build.config.js",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -16,8 +18,14 @@
   },
   "devDependencies": {
     "@interactjs/types": "^1.10.26",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
-    "vite-plugin-top-level-await": "^1.4.1"
-  }
+    "vite-plugin-dts": "^3.7.2",
+    "vite-plugin-top-level-await": "^1.4.1",
+    "vite-plugin-tsconfig": "^1.0.4"
+  },
+  "author": "saxenahrishika<hrishika@shipthis.co>"
 }
